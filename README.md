@@ -1,5 +1,5 @@
 # Chinchou
 
-![alt text](https://oyster.ignimgs.com/mediawiki/apis.ign.com/pokemon-black-and-white/a/a3/Pokemans_170.gif)
+![alt text](//archives.bulbagarden.net/media/upload/4/40/PinRS170.png)
 
 An automated temperature detection and refilling of water from a container to separate reservoir heated or chilled by thermoelectric peltier.  
