@@ -13,25 +13,33 @@
 #define HotPump        3
 #define ColdPump       2
 
+#define Peltier0       5
+#define Peltier1       6
+
+//Water Level Sensor threshold = 275
+//Water Temp Sensor threshold  = 20C
+
 OneWire cWater(Temp0);
 OneWire hWater(Temp1);
 
 DallasTemperature coldWater(&cWater);
 DallasTemperature hotWater(&hWater);
 
-float coldCelcius=0;
-float hotCelcius=0;
+double coldCelcius=0;
+double hotCelcius=0;
 
 
 void setup() {
   Serial.begin(9600);
   coldWater.begin();
   hotWater.begin();
-  pinMode(HotPump, OUTPUT);
-  digitalWrite(HotPump, LOW);
-  pinMode(ColdPump, OUTPUT);
+  pinMode(Peltier0,   OUTPUT);
+  pinMode(Peltier1,   OUTPUT);
+  pinMode(ColdPump,   OUTPUT);
+  digitalWrite(HotPump,  LOW);
   digitalWrite(ColdPump, LOW);
-
+  digitalWrite(Peltier0, LOW);
+  digitalWrite(Peltier1, LOW);
 }
 
 void loop() {
@@ -41,6 +49,20 @@ void loop() {
   hotCelcius = hotWater.getTempCByIndex(0);
   bool water0 = detectWater0();
   bool water1 = detectWater1();
+  
+  if(coldCelcius <= 20.0){
+    digitalWrite(Peltier0, HIGH);
+  }
+  else{
+    digitalWrite(Peltier0, LOW);
+  }
+  
+  if(hotCelcius >= 85.0){
+    digitalWrite(Peltier1, HIGH);
+  }
+  else{
+    digitalWrite(Peltier1, LOW);
+  }
 
   //Logging
   Serial.println("||Cold Gallon||");
@@ -60,8 +82,9 @@ void loop() {
 }
 
 bool detectWater0() {
-  val = analogRead(WaterSensor0)
-  if(val >= 100){
+  double val = analogRead(WaterSensor0);
+  Serial.println(val);
+  if(val >= 275){
     return true;
   }
   else{
@@ -70,8 +93,9 @@ bool detectWater0() {
 }
 
 bool detectWater1() {
-  val = analogRead(WaterSensor1)
-  if(val >= 100){
+  double val = analogRead(WaterSensor1);
+  Serial.println(val);
+  if(val >= 275){
     return true;
   }
   else{
