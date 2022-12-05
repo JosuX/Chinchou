@@ -33,13 +33,18 @@ void setup() {
   Serial.begin(9600);
   coldWater.begin();
   hotWater.begin();
-  pinMode(Peltier0,   OUTPUT);
-  pinMode(Peltier1,   OUTPUT);
-  pinMode(ColdPump,   OUTPUT);
+  pinMode(Peltier0,        OUTPUT);
+  pinMode(Peltier1,        OUTPUT);
+  pinMode(ColdPump,        OUTPUT);
+  pinMode(HotPump,         OUTPUT);
+  pinMode(ColdIndicator,   OUTPUT);
+  pinMode(HotIndicator,    OUTPUT);
   digitalWrite(HotPump,  LOW);
   digitalWrite(ColdPump, LOW);
   digitalWrite(Peltier0, LOW);
   digitalWrite(Peltier1, LOW);
+  digitalWrite(ColdIndicator, LOW);
+  digitalWrite(HotIndicator, LOW);
 }
 
 void loop() {
@@ -49,22 +54,51 @@ void loop() {
   hotCelcius = hotWater.getTempCByIndex(0);
   bool water0 = detectWater0();
   bool water1 = detectWater1();
-  
-  if(coldCelcius <= 20.0){
-    digitalWrite(Peltier0, HIGH);
+
+  if(water0 = false){
+    while(water0 = false){
+      digitalWrite(ColdPump, HIGH);
+    }
   }
   else{
-    digitalWrite(Peltier0, LOW);
-  }
-  
-  if(hotCelcius >= 85.0){
-    digitalWrite(Peltier1, HIGH);
-  }
-  else{
-    digitalWrite(Peltier1, LOW);
+    digitalWrite(HotPump, LOW);
   }
 
-  //Logging
+    if(water1 = false){
+    while(water1 = false){
+      digitalWrite(HotPump, HIGH);
+    }
+  }
+  else{
+    digitalWrite(HotPump, LOW);
+  }
+
+  
+  // Peltier
+  if(coldCelcius <= 20.0 || hotCelcius >= 83.0){
+    digitalWrite(Peltier0, LOW);
+    digitalWrite(Peltier1, LOW);
+
+  }
+
+  else{
+    digitalWrite(Peltier0, HIGH);
+    digitalWrite(Peltier1, HIGH);
+  }
+
+  if(coldCelcius <= 20.0){
+    digitalWrite(ColdIndicator, HIGH);
+  } else {
+    digitalWrite(ColdIndicator, LOW);
+  }
+
+  if(coldCelcius >= 83.0){
+    digitalWrite(HotIndicator, HIGH);
+  } else {
+    digitalWrite(HotIndicator, LOW);
+  }
+
+  // Logging
   Serial.println("||Cold Gallon||");
   Serial.print("Water detected: ");
   Serial.println(water0);
@@ -83,7 +117,6 @@ void loop() {
 
 bool detectWater0() {
   double val = analogRead(WaterSensor0);
-  Serial.println(val);
   if(val >= 275){
     return true;
   }
@@ -94,7 +127,6 @@ bool detectWater0() {
 
 bool detectWater1() {
   double val = analogRead(WaterSensor1);
-  Serial.println(val);
   if(val >= 275){
     return true;
   }
